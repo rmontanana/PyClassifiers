@@ -61,12 +61,10 @@ if (ENABLE_CLANG_TIDY)
   include(StaticAnalyzers) # clang-tidy
 endif (ENABLE_CLANG_TIDY)
 
-# External libraries - dependencies of BayesNet
-# ---------------------------------------------
+# External libraries - dependencies of PyClassifiers
+# --------------------------------------------------
 # include(FetchContent)
-add_git_submodule("lib/json")
-add_git_submodule("lib/mdlp")
-add_git_submodule("lib/Files")
+add_git_submodule("lib/BayesNet")
 
 # Subdirectories
 # --------------
@@ -78,7 +76,6 @@ add_subdirectory(src/PyClassifiers)
 
 if (ENABLE_TESTING)
   MESSAGE("Testing enabled")
-  add_git_submodule("lib/catch2")  
   include(CTest)
   add_subdirectory(tests)
 endif (ENABLE_TESTING)
