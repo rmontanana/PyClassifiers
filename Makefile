@@ -20,6 +20,10 @@ define ClearTests
 	fi ; 
 endef
 
+submodules: ## Update submodules
+	@echo ">>> Updating submodules...";
+	@git submodule update --init --recursive
+	@echo ">>> Done";
 
 clean: ## Clean the tests info
 	@echo ">>> Cleaning Debug PyClassifiers tests...";
