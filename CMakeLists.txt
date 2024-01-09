@@ -25,6 +25,7 @@ set(CMAKE_CXX_EXTENSIONS                  OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS          ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
 # Options
 # -------
 option(ENABLE_TESTING "Unit testing build"                        OFF)
@@ -36,8 +37,8 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF) 
 find_package(Boost 1.66.0 REQUIRED COMPONENTS python3 numpy3) 
 if(Boost_FOUND)
-    message("Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS}")
-    include_directories(${Boost_INCLUDE_DIRS}) 
+  message("Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS}")
+  include_directories(${Boost_INCLUDE_DIRS}) 
 endif()
 
 # Python
@@ -50,11 +51,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_P
 include(AddGitSubmodule)
 
 if (CODE_COVERAGE)
-    enable_testing()
-    include(CodeCoverage)
-    MESSAGE("Code coverage enabled")
-    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -O0 -g")
-    SET(GCC_COVERAGE_LINK_FLAGS " ${GCC_COVERAGE_LINK_FLAGS} -lgcov --coverage")
+  enable_testing()
+  include(CodeCoverage)
+  MESSAGE("Code coverage enabled")
+  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -O0 -g")
+  SET(GCC_COVERAGE_LINK_FLAGS " ${GCC_COVERAGE_LINK_FLAGS} -lgcov --coverage")
 endif (CODE_COVERAGE)
 
 if (ENABLE_CLANG_TIDY)
@@ -63,17 +64,16 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-# include(FetchContent)
 add_git_submodule("lib/BayesNet")
 
 # Subdirectories
 # --------------
+file(GLOB PyClassifiers_SOURCES CONFIGURE_DEPENDS ${PyClassifiers_SOURCE_DIR}/src/PyClassifiers/*.cc ${PyClassifiers_SOURCE_DIR}/src/PyClassifiers/*.hpp)
 add_subdirectory(config)
 add_subdirectory(src/PyClassifiers)
 
 # Testing
 # -------
-
 if (ENABLE_TESTING)
   MESSAGE("Testing enabled")
   include(CTest)

@@ -1,10 +1,7 @@
-SHELL := /bin/bash
-.DEFAULT_GOAL := help
-.PHONY: help build test clean debug
-
+f_release = build_release
 f_debug = build_debug
 app_targets = PyClassifiers
-test_targets = unit_tests_pyclassifiers
+test_targets = unit_tests_pyclassifiers 
 n_procs = -j 16
 
 define ClearTests
@@ -20,27 +17,49 @@ define ClearTests
 	fi ; 
 endef
 
-submodules: ## Update submodules
-	@echo ">>> Updating submodules...";
-	@git submodule update --init --recursive
-	@echo ">>> Done";
+
+setup: ## Install dependencies for tests and coverage
+	@if [ "$(shell uname)" = "Darwin" ]; then \
+		brew install gcovr; \
+		brew install lcov; \
+	fi
+	@if [ "$(shell uname)" = "Linux" ]; then \
+		pip install gcovr; \
+	fi
+
+dependency: ## Create a dependency graph diagram of the project (build/dependency.png)
+	@echo ">>> Creating dependency graph diagram of the project...";
+	$(MAKE) debug
+	cd $(f_debug) && cmake .. --graphviz=dependency.dot && dot -Tpng dependency.dot -o dependency.png
+
+buildd: ## Build the debug targets
+	cmake --build $(f_debug) -t $(app_targets) $(n_procs)
+
+buildr: ## Build the release targets
+	cmake --build $(f_release) -t $(app_targets) $(n_procs)
 
 clean: ## Clean the tests info
 	@echo ">>> Cleaning Debug PyClassifiers tests...";
 	$(call ClearTests)
 	@echo ">>> Done";
 
-build: ## Build a version of the project
+debug: ## Build a debug version of the project
 	@echo ">>> Building Debug PyClassifiers...";
 	@if [ -d ./$(f_debug) ]; then rm -rf ./$(f_debug); fi
 	@mkdir $(f_debug); 
 	@cmake -S . -B $(f_debug) -D CMAKE_BUILD_TYPE=Debug -D ENABLE_TESTING=ON -D CODE_COVERAGE=ON
-	@cmake --build $(f_debug) $(n_procs)
+	@echo ">>> Done";
+
+release: ## Build a Release version of the project
+	@echo ">>> Building Release PyClassifiers...";
+	@if [ -d ./$(f_release) ]; then rm -rf ./$(f_release); fi
+	@mkdir $(f_release); 
+	@cmake -S . -B $(f_release) -D CMAKE_BUILD_TYPE=Release
 	@echo ">>> Done";	
 
 opt = ""
 test: ## Run tests (opt="-s") to verbose output the tests, (opt="-c='Test Maximum Spanning Tree'") to run only that section
-	@echo ">>> Running PyClassifiers & Platform tests...";
+	@echo ">>> Running PyClassifiers tests...";
 	@$(MAKE) clean
 	@cmake --build $(f_debug) -t $(test_targets) $(n_procs)
 	@for t in $(test_targets); do \
@@ -52,10 +71,9 @@ test: ## Run tests (opt="-s") to verbose output the tests, (opt="-c='Test Maximu
 	@echo ">>> Done";
 
 coverage: ## Run tests and generate coverage report (build/index.html)
-	@echo ">>> Building tests with coverage...";
+	@echo ">>> Building tests with coverage..."
 	@$(MAKE) test
-	@cd $(f_debug) ; \
-	gcovr --config ../gcovr.cfg tests ;
+	@gcovr $(f_debug)/tests
 	@echo ">>> Done";	
 
 

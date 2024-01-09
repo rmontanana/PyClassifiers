@@ -6,6 +6,6 @@ include_directories(
     ${Python3_INCLUDE_DIRS}
     ${TORCH_INCLUDE_DIRS}
 )
-add_library(PyClassifiers SHARED PyWrap.cc STree.cc ODTE.cc SVC.cc RandomForest.cc PyClassifier.cc)
+add_library(PyClassifiers SHARED ${PyClassifiers_SOURCES})
 #target_link_libraries(PyClassifiers ${Python3_LIBRARIES} "${TORCH_LIBRARIES}" ${LIBTORCH_PYTHON} Boost::boost Boost::python Boost::numpy xgboost::xgboost)
-target_link_libraries(PyClassifiers ${Python3_LIBRARIES} "${TORCH_LIBRARIES}" ${LIBTORCH_PYTHON} Boost::boost Boost::python Boost::numpy)
+target_link_libraries(PyClassifiers BayesNet ${Python3_LIBRARIES} "${TORCH_LIBRARIES}" ${LIBTORCH_PYTHON} Boost::boost Boost::python Boost::numpy)
