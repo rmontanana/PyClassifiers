@@ -5,7 +5,7 @@
 namespace pywrap {
     class XGBoost : public PyClassifier {
     public:
-        XGBoost() : PyClassifier("xgboost", "XGBClassifier") {};
+        XGBoost();
         ~XGBoost() = default;
         std::string version();
     };

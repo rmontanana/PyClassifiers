@@ -8,8 +8,10 @@
 #include "STree.h"
 #include "SVC.h"
 #include "RandomForest.h"
+#include "XGBoost.h"
 #include "ODTE.h"
 #include "TestUtils.h"
+#include <nlohmann/json.hpp>
 
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
@@ -71,4 +73,14 @@ TEST_CASE("Get num features & num edges", "[PyClassifiers]")
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
     REQUIRE(clf.getNumberOfNodes() == 10);
     REQUIRE(clf.getNumberOfEdges() == 10);
+}
+TEST_CASE("XGBoost", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::XGBoost();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    nlohmann::json hyperparameters = { "n_jobs=1" };
+    clf.setHyperparameters(hyperparameters);
+    auto score = clf.score(raw.Xt, raw.yt);
+    REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
 }
