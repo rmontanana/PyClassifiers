@@ -7,7 +7,6 @@ namespace pywrap {
     public:
         XGBoost();
         ~XGBoost() = default;
-        std::string version();
     };
 } /* namespace pywrap */
 #endif /* XGBOOST_H */
