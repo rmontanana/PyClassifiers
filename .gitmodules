@@ -1,3 +1,4 @@
 [submodule "lib/BayesNet"]
 	path = lib/BayesNet
 	url = https://github.com/rmontanana/BayesNet
+        update = merge
