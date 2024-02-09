@@ -40,10 +40,12 @@ namespace pywrap {
         bayesnet::status_t getStatus() const override { return bayesnet::NORMAL; };
         std::vector<std::string> topological_order() override { return std::vector<std::string>(); }
         void dump_cpt() const override {};
+        std::vector<std::string> getNotes() const override { return notes; };
         void setHyperparameters(const nlohmann::json& hyperparameters) override;
     protected:
         nlohmann::json hyperparameters;
         void trainModel(const torch::Tensor& weights) override {};
+        std::vector<std::string> notes;
     private:
         PyWrap* pyWrap;
         std::string module;
