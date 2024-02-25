@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(PyClassifiers
-  VERSION 1.0.0
+  VERSION 1.0.1
   DESCRIPTION "Python Classifiers Wrapper."
   HOMEPAGE_URL "https://github.com/rmontanana/pyclassifiers"
   LANGUAGES CXX
@@ -68,9 +68,9 @@ add_git_submodule("lib/BayesNet")
 
 # Subdirectories
 # --------------
-file(GLOB PyClassifiers_SOURCES CONFIGURE_DEPENDS ${PyClassifiers_SOURCE_DIR}/src/PyClassifiers/*.cc ${PyClassifiers_SOURCE_DIR}/src/PyClassifiers/*.hpp)
+file(GLOB PyClassifiers_SOURCES CONFIGURE_DEPENDS ${PyClassifiers_SOURCE_DIR}/src/*.cc ${PyClassifiers_SOURCE_DIR}/src/*.hpp)
 add_subdirectory(config)
-add_subdirectory(src/PyClassifiers)
+add_subdirectory(src)
 
 # Testing
 # -------

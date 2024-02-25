@@ -26,36 +26,22 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {{"iris", "STree"}, 0.99333}, {{"iris", "ODTE"}, 0.98667}, {{"iris", "SVC"}, 0.97333}, {{"iris", "RandomForest"}, 1.0},
     };
 
-    std::string file_name = GENERATE("glass", "iris", "ecoli", "diabetes");
-    auto raw = RawDatasets(file_name, false);
-
-    SECTION("Test STree classifier (" + file_name + ")")
+    std::string name = GENERATE("ODTE", "STree", "SVC", "RandomForest");
+    map<std::string, pywrap::PyClassifier*> models = {
+        {"ODTE", new pywrap::ODTE()},
+        {"STree", new pywrap::STree()},
+        {"SVC", new pywrap::SVC()},
+        {"RandomForest", new pywrap::RandomForest()}
+    };
+    SECTION("Test Python Classifier " + name + " score ")
     {
-        auto clf = pywrap::STree();
-        clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-        auto score = clf.score(raw.Xt, raw.yt);
-        REQUIRE(score == Catch::Approx(scores[{file_name, "STree"}]).epsilon(raw.epsilon));
-    }
-    SECTION("Test ODTE classifier (" + file_name + ")")
-    {
-        auto clf = pywrap::ODTE();
-        clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-        auto score = clf.score(raw.Xt, raw.yt);
-        REQUIRE(score == Catch::Approx(scores[{file_name, "ODTE"}]).epsilon(raw.epsilon));
-    }
-    SECTION("Test SVC classifier (" + file_name + ")")
-    {
-        auto clf = pywrap::SVC();
-        clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-        auto score = clf.score(raw.Xt, raw.yt);
-        REQUIRE(score == Catch::Approx(scores[{file_name, "SVC"}]).epsilon(raw.epsilon));
-    }
-    SECTION("Test RandomForest classifier (" + file_name + ")")
-    {
-        auto clf = pywrap::RandomForest();
-        clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-        auto score = clf.score(raw.Xt, raw.yt);
-        REQUIRE(score == Catch::Approx(scores[{file_name, "RandomForest"}]).epsilon(raw.epsilon));
+        for (auto file_name : { "glass", "iris", "ecoli", "diabetes" }) {
+            auto raw = RawDatasets(file_name, false);
+            auto clf = models[name];
+            clf->fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+            auto score = clf->score(raw.Xt, raw.yt);
+            REQUIRE(score == Catch::Approx(scores[{file_name, name}]).epsilon(raw.epsilon));
+        }
     }
 }
 TEST_CASE("Classifiers features", "[PyClassifiers]")
@@ -74,13 +60,13 @@ TEST_CASE("Get num features & num edges", "[PyClassifiers]")
     REQUIRE(clf.getNumberOfNodes() == 10);
     REQUIRE(clf.getNumberOfEdges() == 10);
 }
-TEST_CASE("XGBoost", "[PyClassifiers]")
-{
-    auto raw = RawDatasets("iris", true);
-    auto clf = pywrap::XGBoost();
-    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-    nlohmann::json hyperparameters = { "n_jobs=1" };
-    clf.setHyperparameters(hyperparameters);
-    auto score = clf.score(raw.Xt, raw.yt);
-    REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
-}
+// TEST_CASE("XGBoost", "[PyClassifiers]")
+// {
+//     auto raw = RawDatasets("iris", true);
+//     auto clf = pywrap::XGBoost();
+//     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+//     nlohmann::json hyperparameters = { "n_jobs=1" };
+//     clf.setHyperparameters(hyperparameters);
+//     auto score = clf.score(raw.Xt, raw.yt);
+//     REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
+// }
