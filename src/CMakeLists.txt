@@ -3,6 +3,7 @@ include_directories(
     ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/lib/json/include
     ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src
     ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/classifiers
+    ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/ensembles
     ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/bayesian_network
     ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/utils
     ${CMAKE_BINARY_DIR}/configured_files/include
