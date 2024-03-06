@@ -35,11 +35,12 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
     };
     SECTION("Test Python Classifier " + name + " score ")
     {
-        for (auto file_name : { "glass", "iris", "ecoli", "diabetes" }) {
+        for (std::string file_name : { "glass", "iris", "ecoli", "diabetes" }) {
             auto raw = RawDatasets(file_name, false);
             auto clf = models[name];
             clf->fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
             auto score = clf->score(raw.Xt, raw.yt);
+            INFO("File: " + file_name + " Classifier: " + name + " Score: " + to_string(score));
             REQUIRE(score == Catch::Approx(scores[{file_name, name}]).epsilon(raw.epsilon));
         }
     }

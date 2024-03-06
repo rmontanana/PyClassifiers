@@ -6,6 +6,9 @@ if(ENABLE_TESTING)
         ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/lib/Files
         ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/lib/mdlp
         ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src
+        ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/classifiers
+        ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/bayesian_network
+        ${PyClassifiers_SOURCE_DIR}/lib/BayesNet/src/utils
         ${Python3_INCLUDE_DIRS}
         ${TORCH_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}/configured_files/include
