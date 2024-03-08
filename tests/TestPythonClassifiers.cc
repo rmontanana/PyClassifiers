@@ -34,6 +34,12 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {"SVC", new pywrap::SVC()},
         {"RandomForest", new pywrap::RandomForest()}
     };
+    map<std::string, std::string> versions = {
+        {"ODTE", "0.3.6"},
+        {"STree", "1.3.2"},
+        {"SVC", "1.3.2"},
+        {"RandomForest", "1.3.2"}
+    };
     auto clf = models[name];
 
     SECTION("Test Python Classifier " + name + " score ")
@@ -49,7 +55,7 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
     SECTION("Library check version")
     {
         INFO("Checking version of " + name + " classifier");
-        REQUIRE(clf->getVersion() == ACTUAL_VERSION);
+        REQUIRE(clf->getVersion() == versions[name]);
     }
 }
 TEST_CASE("Classifiers features", "[PyClassifiers]")
