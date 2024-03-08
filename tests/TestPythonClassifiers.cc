@@ -1,17 +1,17 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/catch_approx.hpp>
-#include <catch2/generators/catch_generators.hpp>
 #include <vector>
 #include <map>
 #include <string>
-#include "STree.h"
-#include "SVC.h"
-#include "RandomForest.h"
-#include "XGBoost.h"
-#include "ODTE.h"
-#include "TestUtils.h"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <nlohmann/json.hpp>
+#include "pyclfs/STree.h"
+#include "pyclfs/SVC.h"
+#include "pyclfs/RandomForest.h"
+#include "pyclfs/XGBoost.h"
+#include "pyclfs/ODTE.h"
+#include "TestUtils.h"
 
 const std::string ACTUAL_VERSION = "1.0.4";
 

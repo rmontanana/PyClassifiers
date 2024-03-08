@@ -1,5 +1,5 @@
 #include "TestUtils.h"
-#include "config.h"
+#include "bayesnet/config.h"
 
 class Paths {
 public:

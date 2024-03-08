@@ -69,7 +69,7 @@ find_library(BayesNet NAMES libBayesNet BayesNet)
 
 # Subdirectories
 # --------------
-add_subdirectory(src)
+add_subdirectory(pyclfs)
 
 # Testing
 # -------
@@ -88,5 +88,5 @@ install(TARGETS PyClassifiers
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         CONFIGURATIONS Release)
-install(DIRECTORY src/ DESTINATION include/pyclassifiers FILES_MATCHING CONFIGURATIONS Release PATTERN "*.h" PATTERN "*.hpp")
+install(DIRECTORY pyclfs/ DESTINATION include/pyclassifiers FILES_MATCHING CONFIGURATIONS Release PATTERN "*.h" PATTERN "*.hpp")
 install(FILES /usr/local/include/bayesnet/config.h DESTINATION include/pyclassifiers CONFIGURATIONS Release)

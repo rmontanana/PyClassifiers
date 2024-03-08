@@ -1,15 +1,15 @@
 #ifndef PYCLASSIFIER_H
 #define PYCLASSIFIER_H
-#include "boost/python/detail/wrap_python.hpp"
-#include <boost/python/numpy.hpp>
-#include <nlohmann/json.hpp>
 #include <string>
 #include <map>
 #include <vector>
 #include <utility>
+#include "boost/python/detail/wrap_python.hpp"
+#include <boost/python/numpy.hpp>
 #include <torch/torch.h>
+#include <nlohmann/json.hpp>
+#include "bayesnet/classifiers/Classifier.h"
 #include "PyWrap.h"
-#include "classifiers/Classifier.h"
 #include "TypeId.h"
 
 namespace pywrap {
