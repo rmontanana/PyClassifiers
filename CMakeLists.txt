@@ -69,13 +69,15 @@ find_library(BayesNet NAMES libBayesNet BayesNet)
 
 # Subdirectories
 # --------------
-file(GLOB PyClassifiers_SOURCES CONFIGURE_DEPENDS ${PyClassifiers_SOURCE_DIR}/src/*.cc ${PyClassifiers_SOURCE_DIR}/src/*.hpp)
 add_subdirectory(src)
 
 # Testing
 # -------
 if (ENABLE_TESTING)
   MESSAGE("Testing enabled")
+  add_git_submodule(lib/catch2)
+  add_git_submodule(lib/mdlp)
+  add_subdirectory(lib/Files)
   include(CTest)
   add_subdirectory(tests)
 endif (ENABLE_TESTING)

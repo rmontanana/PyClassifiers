@@ -1,9 +1,8 @@
 include_directories(
-    ${PyClassifiers_SOURCE_DIR}/lib/Files
-    ${PyClassifiers_SOURCE_DIR}/lib/json/include
     ${Python3_INCLUDE_DIRS}
     ${TORCH_INCLUDE_DIRS}
+    ${PyClassifiers_SOURCE_DIR}/lib/json/include
     /usr/local/include/bayesnet
 )
-add_library(PyClassifiers ${PyClassifiers_SOURCES})
+add_library(PyClassifiers ODTE.cc STree.cc SVC.cc RandomForest.cc XGBoost.cc PyClassifier.cc)
 target_link_libraries(PyClassifiers ${Python3_LIBRARIES} "${TORCH_LIBRARIES}" ${LIBTORCH_PYTHON} Boost::boost Boost::python Boost::numpy)
