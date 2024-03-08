@@ -13,6 +13,8 @@
 #include "TestUtils.h"
 #include <nlohmann/json.hpp>
 
+const std::string ACTUAL_VERSION = "1.0.4";
+
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
     map <pair<std::string, std::string>, float> scores = {
@@ -25,7 +27,6 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         // Iris
         {{"iris", "STree"}, 0.99333}, {{"iris", "ODTE"}, 0.98667}, {{"iris", "SVC"}, 0.97333}, {{"iris", "RandomForest"}, 1.0},
     };
-
     std::string name = GENERATE("ODTE", "STree", "SVC", "RandomForest");
     map<std::string, pywrap::PyClassifier*> models = {
         {"ODTE", new pywrap::ODTE()},
@@ -33,16 +34,22 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {"SVC", new pywrap::SVC()},
         {"RandomForest", new pywrap::RandomForest()}
     };
+    auto clf = models[name];
+
     SECTION("Test Python Classifier " + name + " score ")
     {
         for (std::string file_name : { "glass", "iris", "ecoli", "diabetes" }) {
             auto raw = RawDatasets(file_name, false);
-            auto clf = models[name];
             clf->fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
             auto score = clf->score(raw.Xt, raw.yt);
             INFO("File: " + file_name + " Classifier: " + name + " Score: " + to_string(score));
             REQUIRE(score == Catch::Approx(scores[{file_name, name}]).epsilon(raw.epsilon));
         }
+    }
+    SECTION("Library check version")
+    {
+        INFO("Checking version of " + name + " classifier");
+        REQUIRE(clf->getVersion() == ACTUAL_VERSION);
     }
 }
 TEST_CASE("Classifiers features", "[PyClassifiers]")

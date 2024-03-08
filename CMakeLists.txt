@@ -30,6 +30,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 # -------
 option(ENABLE_TESTING "Unit testing build"                        OFF)
 option(CODE_COVERAGE "Collect coverage from test library"         OFF)
+option(INSTALL_GTEST "Enable installation of googletest."         OFF)
 
 # Boost Library
 set(Boost_USE_STATIC_LIBS OFF) 
@@ -64,12 +65,11 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-add_git_submodule("lib/BayesNet")
+find_library(BayesNet NAMES libBayesNet BayesNet)
 
 # Subdirectories
 # --------------
 file(GLOB PyClassifiers_SOURCES CONFIGURE_DEPENDS ${PyClassifiers_SOURCE_DIR}/src/*.cc ${PyClassifiers_SOURCE_DIR}/src/*.hpp)
-add_subdirectory(config)
 add_subdirectory(src)
 
 # Testing
@@ -79,3 +79,12 @@ if (ENABLE_TESTING)
   include(CTest)
   add_subdirectory(tests)
 endif (ENABLE_TESTING)
+
+# Installation
+# ------------
+install(TARGETS PyClassifiers
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        CONFIGURATIONS Release)
+install(DIRECTORY src/ DESTINATION include/pyclassifiers FILES_MATCHING CONFIGURATIONS Release PATTERN "*.h" PATTERN "*.hpp")
+install(FILES /usr/local/include/bayesnet/config.h DESTINATION include/pyclassifiers CONFIGURATIONS Release)

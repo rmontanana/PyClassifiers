@@ -43,6 +43,11 @@ clean: ## Clean the tests info
 	$(call ClearTests)
 	@echo ">>> Done";
 
+install: ## Install library
+	@echo ">>> Installing PyClassifiers...";
+	@cmake --install $(f_release)
+	@echo ">>> Done";
+
 debug: ## Build a debug version of the project
 	@echo ">>> Building Debug PyClassifiers...";
 	@if [ -d ./$(f_debug) ]; then rm -rf ./$(f_debug); fi

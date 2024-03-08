@@ -9,7 +9,7 @@
 #include <utility>
 #include <torch/torch.h>
 #include "PyWrap.h"
-#include "Classifier.h"
+#include "classifiers/Classifier.h"
 #include "TypeId.h"
 
 namespace pywrap {

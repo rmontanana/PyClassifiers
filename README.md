@@ -59,3 +59,11 @@ export BOOST_ROOT=/path/to/library/own/
 ```
 
 Don't forget to add the export BOOST_ROOT statement to .bashrc or wherever it is meant to be.
+
+## Installation
+
+```bash
+make release
+make buildr
+sudo make install
+```
