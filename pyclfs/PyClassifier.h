@@ -42,7 +42,7 @@ namespace pywrap {
         std::vector<std::string> graph(const std::string& title = "") const override { return std::vector<std::string>(); }
         bayesnet::status_t getStatus() const override { return bayesnet::NORMAL; };
         std::vector<std::string> topological_order() override { return std::vector<std::string>(); }
-        void dump_cpt() const override {};
+        std::string dump_cpt() const override { return ""; };
         std::vector<std::string> getNotes() const override { return notes; };
         void setHyperparameters(const nlohmann::json& hyperparameters) override;
     protected:

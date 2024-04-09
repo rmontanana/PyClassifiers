@@ -22,20 +22,6 @@ libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by b_xxxx)
 
 The solution is to erase the libstdc++ library from the miniconda installation:
 
-### MPI
-
-In Linux just install openmpi & openmpi-devel packages. Only if cmake can't find openmpi installation (like in Oracle Linux) set the following variable:
-
-```bash
-export MPI_HOME="/usr/lib64/openmpi"
-```
-
-In Mac OS X, install mpich with brew and if cmake doesn't find it, edit mpicxx wrapper to remove the ",-commons,use_dylibs" from final_ldflags
-
-```bash
-vi /opt/homebrew/bin/mpicx
-```
-
 ### boost library
 
 [Getting Started](<https://www.boost.org/doc/libs/1_83_0/more/getting_started/index.html>)
