@@ -65,8 +65,11 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${Platform_SOURCE_DIR}/../lib/lib REQUIRED)
-find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${Platform_SOURCE_DIR}/../lib/include)
+find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
+find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${PyClassifiers_SOURCE_DIR}/../lib/include)
+message(STATUS "BayesNet=${BayesNet}")
+message(STATUS "Bayesnet_INCLUDE_DIRS=${Bayesnet_INCLUDE_DIRS}")
+
 
 # Subdirectories
 # --------------
@@ -90,4 +93,4 @@ install(TARGETS PyClassifiers
         LIBRARY DESTINATION lib
         CONFIGURATIONS Release)
 install(DIRECTORY pyclfs/ DESTINATION include/pyclassifiers FILES_MATCHING CONFIGURATIONS Release PATTERN "*.h" PATTERN "*.hpp")
-install(FILES /usr/local/include/bayesnet/config.h DESTINATION include/pyclassifiers CONFIGURATIONS Release)
+install(FILES ${Bayesnet_INCLUDE_DIRS}/bayesnet/config.h DESTINATION include/pyclassifiers CONFIGURATIONS Release)
