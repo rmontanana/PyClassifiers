@@ -21,10 +21,22 @@ namespace pywrap {
         Xn = Xn.transpose();
         return Xn;
     }
+    np::ndarray tensorInt2numpy(torch::Tensor& X)
+    {
+        int m = X.size(0);
+        int n = X.size(1);
+        auto Xn = np::from_data(X.data_ptr(), np::dtype::get_builtin<int>(), bp::make_tuple(m, n), bp::make_tuple(sizeof(X.dtype()) * 2 * n, sizeof(X.dtype()) * 2), bp::object());
+        Xn = Xn.transpose();
+        //std::cout << "Transposed array:\n" << boost::python::extract<char const*>(boost::python::str(Xn)) << std::endl;
+        return Xn;
+    }
     std::pair<np::ndarray, np::ndarray> tensors2numpy(torch::Tensor& X, torch::Tensor& y)
     {
         int n = X.size(1);
         auto yn = np::from_data(y.data_ptr(), np::dtype::get_builtin<int32_t>(), bp::make_tuple(n), bp::make_tuple(sizeof(y.dtype()) * 2), bp::object());
+        if (X.dtype() == torch::kInt32) {
+            return { tensorInt2numpy(X), yn };
+        }
         return { tensor2numpy(X), yn };
     }
     std::string PyClassifier::version()
@@ -65,8 +77,14 @@ namespace pywrap {
     torch::Tensor PyClassifier::predict(torch::Tensor& X)
     {
         int dimension = X.size(1);
-        auto Xn = tensor2numpy(X);
-        CPyObject Xp = bp::incref(bp::object(Xn).ptr());
+        CPyObject Xp;
+        if (X.dtype() == torch::kInt32) {
+            auto Xn = tensorInt2numpy(X);
+            Xp = bp::incref(bp::object(Xn).ptr());
+        } else {
+            auto Xn = tensor2numpy(X);
+            Xp = bp::incref(bp::object(Xn).ptr());
+        }
         PyObject* incoming = pyWrap->predict(id, Xp);
         bp::handle<> handle(incoming);
         bp::object object(handle);

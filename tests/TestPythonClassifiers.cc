@@ -13,7 +13,7 @@
 #include "pyclfs/ODTE.h"
 #include "TestUtils.h"
 
-const std::string ACTUAL_VERSION = "1.0.4";
+const std::string ACTUAL_VERSION = "1.0.5";
 
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
@@ -60,19 +60,27 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 }
 TEST_CASE("Classifiers features", "[PyClassifiers]")
 {
-    auto raw = RawDatasets("iris", true);
+    auto raw = RawDatasets("iris", false);
     auto clf = pywrap::STree();
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-    REQUIRE(clf.getNumberOfNodes() == 3);
-    REQUIRE(clf.getNumberOfEdges() == 2);
+    REQUIRE(clf.getNumberOfNodes() == 5);
+    REQUIRE(clf.getNumberOfEdges() == 3);
 }
 TEST_CASE("Get num features & num edges", "[PyClassifiers]")
 {
-    auto raw = RawDatasets("iris", true);
+    auto raw = RawDatasets("iris", false);
     auto clf = pywrap::ODTE();
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-    REQUIRE(clf.getNumberOfNodes() == 10);
-    REQUIRE(clf.getNumberOfEdges() == 10);
+    REQUIRE(clf.getNumberOfNodes() == 50);
+    REQUIRE(clf.getNumberOfEdges() == 30);
+}
+TEST_CASE("Classifier with discretized dataset", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::SVC();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    auto score = clf.score(raw.Xt, raw.yt);
+    REQUIRE(score == Catch::Approx(0.96667f).epsilon(raw.epsilon));
 }
 // TEST_CASE("XGBoost", "[PyClassifiers]")
 // {
