@@ -17,12 +17,12 @@ namespace pywrap {
     public:
         PyClassifier(const std::string& module, const std::string& className, const bool sklearn = false);
         virtual ~PyClassifier();
-        PyClassifier& fit(std::vector<std::vector<int>>& X, std::vector<int>& y, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states) override { return *this; };
+        PyClassifier& fit(std::vector<std::vector<int>>& X, std::vector<int>& y, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override { return *this; };
         // X is nxm tensor, y is nx1 tensor
-        PyClassifier& fit(torch::Tensor& X, torch::Tensor& y, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states) override;
+        PyClassifier& fit(torch::Tensor& X, torch::Tensor& y, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override;
         PyClassifier& fit(torch::Tensor& X, torch::Tensor& y);
-        PyClassifier& fit(torch::Tensor& dataset, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states) override { return *this; };
-        PyClassifier& fit(torch::Tensor& dataset, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const torch::Tensor& weights) override { return *this; };
+        PyClassifier& fit(torch::Tensor& dataset, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override { return *this; };
+        PyClassifier& fit(torch::Tensor& dataset, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const torch::Tensor& weights, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override { return *this; };
         torch::Tensor predict(torch::Tensor& X) override;
         std::vector<int> predict(std::vector<std::vector<int >>& X) override { return std::vector<int>(); }; // Not implemented
         torch::Tensor predict_proba(torch::Tensor& X) override { return torch::zeros({ 0, 0 }); } // Not implemented
@@ -47,7 +47,7 @@ namespace pywrap {
         void setHyperparameters(const nlohmann::json& hyperparameters) override;
     protected:
         nlohmann::json hyperparameters;
-        void trainModel(const torch::Tensor& weights) override {};
+        void trainModel(const torch::Tensor& weights, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override {};
         std::vector<std::string> notes;
     private:
         PyWrap* pyWrap;

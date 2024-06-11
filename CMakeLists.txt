@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(PyClassifiers
-  VERSION 1.0.1
+  VERSION 1.0.2
   DESCRIPTION "Python Classifiers Wrapper."
   HOMEPAGE_URL "https://github.com/rmontanana/pyclassifiers"
   LANGUAGES CXX
