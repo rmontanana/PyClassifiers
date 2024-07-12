@@ -99,13 +99,37 @@ namespace pywrap {
         Py_XDECREF(incoming);
         return resultTensor;
     }
+    torch::Tensor PyClassifier::predict_proba(torch::Tensor& X)
+    {
+        int dimension = X.size(1);
+        CPyObject Xp;
+        if (X.dtype() == torch::kInt32) {
+            auto Xn = tensorInt2numpy(X);
+            Xp = bp::incref(bp::object(Xn).ptr());
+        } else {
+            auto Xn = tensor2numpy(X);
+            Xp = bp::incref(bp::object(Xn).ptr());
+        }
+        PyObject* incoming = pyWrap->predict_proba(id, Xp);
+        bp::handle<> handle(incoming);
+        bp::object object(handle);
+        np::ndarray prediction = np::from_object(object);
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+            throw std::runtime_error("Error creating object for predict_proba in " + module + " and class " + className);
+        }
+        double* data = reinterpret_cast<double*>(prediction.get_data());
+        std::vector<double> vPrediction(data, data + prediction.shape(0) * prediction.shape(1));
+        auto resultTensor = torch::tensor(vPrediction, torch::kFloat64).reshape({ prediction.shape(0), prediction.shape(1) });
+        Py_XDECREF(incoming);
+        return resultTensor;
+    }
     float PyClassifier::score(torch::Tensor& X, torch::Tensor& y)
     {
         auto [Xn, yn] = tensors2numpy(X, y);
         CPyObject Xp = bp::incref(bp::object(Xn).ptr());
         CPyObject yp = bp::incref(bp::object(yn).ptr());
-        float result = pyWrap->score(id, Xp, yp);
-        return result;
+        return pyWrap->score(id, Xp, yp);
     }
     void PyClassifier::setHyperparameters(const nlohmann::json& hyperparameters)
     {

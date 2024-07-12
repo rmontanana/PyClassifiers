@@ -31,6 +31,7 @@ namespace pywrap {
         void setHyperparameters(const clfId_t id, const json& hyperparameters);
         void fit(const clfId_t id, CPyObject& X, CPyObject& y);
         PyObject* predict(const clfId_t id, CPyObject& X);
+        PyObject* predict_proba(const clfId_t id, CPyObject& X);
         double score(const clfId_t id, CPyObject& X, CPyObject& y);
         void clean(const clfId_t id);
         void importClass(const clfId_t id, const std::string& moduleName, const std::string& className);
@@ -38,6 +39,7 @@ namespace pywrap {
     private:
         // Only call RemoveInstance from clean method
         static void RemoveInstance();
+        PyObject* predict_method(const std::string name, const clfId_t id, CPyObject& X);
         void errorAbort(const std::string& message);
         // No need to use static map here, since this class is a singleton
         std::map<clfId_t, std::tuple<PyObject*, PyObject*, PyObject*>> moduleClassMap;

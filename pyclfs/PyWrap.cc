@@ -222,11 +222,19 @@ namespace pywrap {
             errorAbort(e.what());
         }
     }
+    PyObject* PyWrap::predict_proba(const clfId_t id, CPyObject& X)
+    {
+        return predict_method("predict_proba", id, X);
+    }
     PyObject* PyWrap::predict(const clfId_t id, CPyObject& X)
+    {
+        return predict_method("predict", id, X);
+    }
+    PyObject* PyWrap::predict_method(const std::string name, const clfId_t id, CPyObject& X)
     {
         PyObject* instance = getClass(id);
         PyObject* result;
-        CPyObject method = PyUnicode_FromString("predict");
+        CPyObject method = PyUnicode_FromString(name.c_str());
         try {
             if (!(result = PyObject_CallMethodObjArgs(instance, method.getObject(), X.getObject(), NULL)))
                 errorAbort("Couldn't call method predict");

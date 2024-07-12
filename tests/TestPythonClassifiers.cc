@@ -13,8 +13,6 @@
 #include "pyclfs/ODTE.h"
 #include "TestUtils.h"
 
-const std::string ACTUAL_VERSION = "1.0.5";
-
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
     map <pair<std::string, std::string>, float> scores = {
@@ -37,15 +35,17 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
     map<std::string, std::string> versions = {
         {"ODTE", "0.3.6"},
         {"STree", "1.3.2"},
-        {"SVC", "1.3.2"},
-        {"RandomForest", "1.3.2"}
+        {"SVC", "1.5.0"},
+        {"RandomForest", "1.5.0"}
     };
     auto clf = models[name];
 
     SECTION("Test Python Classifier " + name + " score ")
     {
+        auto random_state = nlohmann::json::parse("{ \"random_state\": 0 }");
         for (std::string file_name : { "glass", "iris", "ecoli", "diabetes" }) {
             auto raw = RawDatasets(file_name, false);
+            clf->setHyperparameters(random_state);
             clf->fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
             auto score = clf->score(raw.Xt, raw.yt);
             INFO("File: " + file_name + " Classifier: " + name + " Score: " + to_string(score));
@@ -81,6 +81,29 @@ TEST_CASE("Classifier with discretized dataset", "[PyClassifiers]")
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
     auto score = clf.score(raw.Xt, raw.yt);
     REQUIRE(score == Catch::Approx(0.96667f).epsilon(raw.epsilon));
+}
+TEST_CASE("Predict with non_discretized dataset and comparing to predict_proba", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", false);
+    auto clf = pywrap::STree();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    auto predictions = clf.predict(raw.Xt);
+    auto probabilities = clf.predict_proba(raw.Xt);
+    auto preds = probabilities.argmax(1);
+    auto classNumStates = torch::max(raw.yt).item<int>() + 1;
+
+    REQUIRE(predictions.size(0) == probabilities.size(0));
+    REQUIRE(predictions.size(0) == preds.size(0));
+    REQUIRE(probabilities.size(1) == classNumStates);
+    int right = 0;
+    for (std::size_t i = 0; i < predictions.size(0); ++i) {
+        if (predictions[i].item<int>() == preds[i].item<int>()) {
+            right++;
+        }
+        REQUIRE(predictions[i].item<int>() == preds[i].item<int>());
+    }
+    auto accuracy = right / static_cast<float>(predictions.size(0));
+    REQUIRE(accuracy == Catch::Approx(1.0f).epsilon(raw.epsilon));
 }
 // TEST_CASE("XGBoost", "[PyClassifiers]")
 // {

@@ -25,7 +25,7 @@ namespace pywrap {
         PyClassifier& fit(torch::Tensor& dataset, const std::vector<std::string>& features, const std::string& className, std::map<std::string, std::vector<int>>& states, const torch::Tensor& weights, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override { return *this; };
         torch::Tensor predict(torch::Tensor& X) override;
         std::vector<int> predict(std::vector<std::vector<int >>& X) override { return std::vector<int>(); }; // Not implemented
-        torch::Tensor predict_proba(torch::Tensor& X) override { return torch::zeros({ 0, 0 }); } // Not implemented
+        torch::Tensor predict_proba(torch::Tensor& X) override;
         std::vector<std::vector<double>> predict_proba(std::vector<std::vector<int >>& X) override { return std::vector<std::vector<double>>(); }; // Not implemented
         float score(std::vector<std::vector<int>>& X, std::vector<int>& y) override { return 0.0; }; // Not implemented
         float score(torch::Tensor& X, torch::Tensor& y) override;
