@@ -105,13 +105,13 @@ TEST_CASE("Predict with non_discretized dataset and comparing to predict_proba",
     auto accuracy = right / static_cast<float>(predictions.size(0));
     REQUIRE(accuracy == Catch::Approx(1.0f).epsilon(raw.epsilon));
 }
-// TEST_CASE("XGBoost", "[PyClassifiers]")
-// {
-//     auto raw = RawDatasets("iris", true);
-//     auto clf = pywrap::XGBoost();
-//     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-//     nlohmann::json hyperparameters = { "n_jobs=1" };
-//     clf.setHyperparameters(hyperparameters);
-//     auto score = clf.score(raw.Xt, raw.yt);
-//     REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
-// }
+TEST_CASE("XGBoost", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::XGBoost();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    nlohmann::json hyperparameters = { "n_jobs=1" };
+    clf.setHyperparameters(hyperparameters);
+    auto score = clf.score(raw.Xt, raw.yt);
+    REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
+}
