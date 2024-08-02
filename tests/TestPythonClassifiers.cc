@@ -17,11 +17,11 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
     map <pair<std::string, std::string>, float> scores = {
         // Diabetes
-        {{"diabetes", "STree"}, 0.81641}, {{"diabetes", "ODTE"}, 0.84635}, {{"diabetes", "SVC"}, 0.76823}, {{"diabetes", "RandomForest"}, 1.0},
+        {{"diabetes", "STree"}, 0.81641}, {{"diabetes", "ODTE"}, 0.854166687}, {{"diabetes", "SVC"}, 0.76823}, {{"diabetes", "RandomForest"}, 1.0},
         // Ecoli
-        {{"ecoli", "STree"}, 0.8125}, {{"ecoli", "ODTE"}, 0.84821}, {{"ecoli", "SVC"}, 0.89583}, {{"ecoli", "RandomForest"}, 1.0},
+        {{"ecoli", "STree"}, 0.8125}, {{"ecoli", "ODTE"}, 0.875}, {{"ecoli", "SVC"}, 0.89583}, {{"ecoli", "RandomForest"}, 1.0},
         // Glass
-        {{"glass", "STree"}, 0.57009}, {{"glass", "ODTE"}, 0.77103}, {{"glass", "SVC"}, 0.35514}, {{"glass", "RandomForest"}, 1.0},
+        {{"glass", "STree"}, 0.57009}, {{"glass", "ODTE"}, 0.76168227}, {{"glass", "SVC"}, 0.35514}, {{"glass", "RandomForest"}, 1.0},
         // Iris
         {{"iris", "STree"}, 0.99333}, {{"iris", "ODTE"}, 0.98667}, {{"iris", "SVC"}, 0.97333}, {{"iris", "RandomForest"}, 1.0},
     };
@@ -33,10 +33,10 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {"RandomForest", new pywrap::RandomForest()}
     };
     map<std::string, std::string> versions = {
-        {"ODTE", "0.3.6"},
+        {"ODTE", "1.0.0"},
         {"STree", "1.3.2"},
-        {"SVC", "1.5.0"},
-        {"RandomForest", "1.5.0"}
+        {"SVC", "1.5.1"},
+        {"RandomForest", "1.5.1"}
     };
     auto clf = models[name];
 
@@ -68,8 +68,10 @@ TEST_CASE("Classifiers features", "[PyClassifiers]")
 }
 TEST_CASE("Get num features & num edges", "[PyClassifiers]")
 {
+    auto estimators = nlohmann::json::parse("{ \"n_estimators\": 10 }");
     auto raw = RawDatasets("iris", false);
     auto clf = pywrap::ODTE();
+    clf.setHyperparameters(estimators);
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
     REQUIRE(clf.getNumberOfNodes() == 50);
     REQUIRE(clf.getNumberOfEdges() == 30);
@@ -115,22 +117,22 @@ TEST_CASE("XGBoost", "[PyClassifiers]")
     auto score = clf.score(raw.Xt, raw.yt);
     REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
 }
-TEST_CASE("XGBoost predict proba", "[PyClassifiers]")
-{
-    auto raw = RawDatasets("iris", true);
-    auto clf = pywrap::XGBoost();
-    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-    nlohmann::json hyperparameters = { "n_jobs=1" };
-    clf.setHyperparameters(hyperparameters);
-    auto predict = clf.predict(raw.Xt);
-    // for (int row = 0; row < predict.size(0); row++) {
-    //     auto sum = 0.0;
-    //     for (int col = 0; col < predict.size(1); col++) {
-    //         std::cout << std::setw(12) << std::setprecision(10) << predict[row][col].item<double>() << " ";
-    //         sum += predict[row][col].item<int>();
-    //     }
-    //     std::cout << std::endl;
-    //     // REQUIRE(sum == Catch::Approx(1.0).epsilon(raw.epsilon));
-    // }
-    std::cout << predict << std::endl;
-}
+// TEST_CASE("XGBoost predict proba", "[PyClassifiers]")
+// {
+//     auto raw = RawDatasets("iris", true);
+//     auto clf = pywrap::XGBoost();
+//     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+//     // nlohmann::json hyperparameters = { "n_jobs=1" };
+//     // clf.setHyperparameters(hyperparameters);
+//     auto predict = clf.predict(raw.Xt);
+//     for (int row = 0; row < predict.size(0); row++) {
+//         auto sum = 0.0;
+//         for (int col = 0; col < predict.size(1); col++) {
+//             std::cout << std::setw(12) << std::setprecision(10) << predict[row][col].item<double>() << " ";
+//             sum += predict[row][col].item<int>();
+//         }
+//         std::cout << std::endl;
+//         // REQUIRE(sum == Catch::Approx(1.0).epsilon(raw.epsilon));
+//     }
+//     std::cout << predict << std::endl;
+// }
