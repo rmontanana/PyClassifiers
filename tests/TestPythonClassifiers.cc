@@ -115,3 +115,22 @@ TEST_CASE("XGBoost", "[PyClassifiers]")
     auto score = clf.score(raw.Xt, raw.yt);
     REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
 }
+TEST_CASE("XGBoost predict proba", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::XGBoost();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    nlohmann::json hyperparameters = { "n_jobs=1" };
+    clf.setHyperparameters(hyperparameters);
+    auto predict = clf.predict(raw.Xt);
+    // for (int row = 0; row < predict.size(0); row++) {
+    //     auto sum = 0.0;
+    //     for (int col = 0; col < predict.size(1); col++) {
+    //         std::cout << std::setw(12) << std::setprecision(10) << predict[row][col].item<double>() << " ";
+    //         sum += predict[row][col].item<int>();
+    //     }
+    //     std::cout << std::endl;
+    //     // REQUIRE(sum == Catch::Approx(1.0).epsilon(raw.epsilon));
+    // }
+    std::cout << predict << std::endl;
+}
