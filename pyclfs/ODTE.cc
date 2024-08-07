@@ -3,7 +3,7 @@
 namespace pywrap {
     ODTE::ODTE() : PyClassifier("odte", "Odte")
     {
-        validHyperparameters = { "n_jobs", "n_estimators", "random_state", "be_hyperparams" };
+        validHyperparameters = { "n_jobs", "n_estimators", "random_state", "max_samples", "max_features", "be_hyperparams" };
     }
     int ODTE::getNumberOfNodes() const
     {
