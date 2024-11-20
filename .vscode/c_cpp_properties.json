@@ -12,6 +12,16 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "compileCommands": "${workspaceFolder}/cmake-build-release/compile_commands.json"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4

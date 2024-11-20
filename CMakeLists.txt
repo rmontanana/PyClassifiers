@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.20)
-
 project(PyClassifiers
   VERSION 1.0.3
   DESCRIPTION "Python Classifiers Wrapper."
@@ -43,7 +42,7 @@ if(Boost_FOUND)
 endif()
 
 # Python
-find_package(Python3 3.11...3.11.9 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 3.11 COMPONENTS Interpreter Development REQUIRED)
 message("Python3_LIBRARIES=${Python3_LIBRARIES}")
 
 # CMakes modules
