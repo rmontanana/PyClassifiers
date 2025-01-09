@@ -33,8 +33,8 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {"RandomForest", new pywrap::RandomForest()}
     };
     map<std::string, std::string> versions = {
-        {"ODTE", "1.0.0"},
-        {"STree", "1.3.2"},
+        {"ODTE", "1.0.0-1"},
+        {"STree", "1.4.0"},
         {"SVC", "1.5.1"},
         {"RandomForest", "1.5.1"}
     };
