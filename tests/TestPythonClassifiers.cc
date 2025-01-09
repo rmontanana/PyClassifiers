@@ -136,3 +136,13 @@ TEST_CASE("XGBoost", "[PyClassifiers]")
 //     }
 //     std::cout << predict << std::endl;
 // }
+TEST_CASE("PBC4cip", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::PBC4cip();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    nlohmann::json hyperparameters = { };
+    clf.setHyperparameters(hyperparameters);
+    auto score = clf.score(raw.Xt, raw.yt);
+    REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
+}
