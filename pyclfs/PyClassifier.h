@@ -49,6 +49,7 @@ namespace pywrap {
         nlohmann::json hyperparameters;
         void trainModel(const torch::Tensor& weights, const bayesnet::Smoothing_t smoothing = bayesnet::Smoothing_t::NONE) override {};
         std::vector<std::string> notes;
+        bool xgboost = false;
     private:
         PyWrap* pyWrap;
         std::string module;

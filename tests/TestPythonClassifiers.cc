@@ -116,23 +116,30 @@ TEST_CASE("XGBoost", "[PyClassifiers]")
     clf.setHyperparameters(hyperparameters);
     auto score = clf.score(raw.Xt, raw.yt);
     REQUIRE(score == Catch::Approx(0.98).epsilon(raw.epsilon));
+    std::cout << "XGBoost score: " << score << std::endl;
 }
-// TEST_CASE("XGBoost predict proba", "[PyClassifiers]")
-// {
-//     auto raw = RawDatasets("iris", true);
-//     auto clf = pywrap::XGBoost();
-//     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
-//     // nlohmann::json hyperparameters = { "n_jobs=1" };
-//     // clf.setHyperparameters(hyperparameters);
-//     auto predict = clf.predict(raw.Xt);
-//     for (int row = 0; row < predict.size(0); row++) {
-//         auto sum = 0.0;
-//         for (int col = 0; col < predict.size(1); col++) {
-//             std::cout << std::setw(12) << std::setprecision(10) << predict[row][col].item<double>() << " ";
-//             sum += predict[row][col].item<int>();
-//         }
-//         std::cout << std::endl;
-//         // REQUIRE(sum == Catch::Approx(1.0).epsilon(raw.epsilon));
-//     }
-//     std::cout << predict << std::endl;
-// }
+TEST_CASE("XGBoost predict proba", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", true);
+    auto clf = pywrap::XGBoost();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    // nlohmann::json hyperparameters = { "n_jobs=1" };
+    // clf.setHyperparameters(hyperparameters);
+    auto predict_proba = clf.predict_proba(raw.Xt);
+    auto predict = clf.predict(raw.Xt);
+    // std::cout << "Predict proba: " << predict_proba << std::endl;
+    // std::cout << "Predict proba size: " << predict_proba.sizes() << std::endl;
+    // assert(predict.size(0) == predict_proba.size(0));
+    for (int row = 0; row < predict_proba.size(0); row++) {
+        // auto sum = 0.0;
+        // std::cout << "Row " << std::setw(3) << row << ": ";
+        // for (int col = 0; col < predict_proba.size(1); col++) {
+        //     std::cout << std::setw(9) << std::fixed << std::setprecision(7) << predict_proba[row][col].item<double>() << " ";
+        //     sum += predict_proba[row][col].item<double>();
+        // }
+        // std::cout << " -> " << std::setw(9) << std::fixed << std::setprecision(7) << sum << " -> " << torch::argmax(predict_proba[row]).item<int>() << " = " << predict[row].item<int>() << std::endl;
+        //     // REQUIRE(sum == Catch::Approx(1.0).epsilon(raw.epsilon));
+        REQUIRE(torch::argmax(predict_proba[row]).item<int>() == predict[row].item<int>());
+        REQUIRE(torch::sum(predict_proba[row]).item<double>() == Catch::Approx(1.0).epsilon(raw.epsilon));
+    }
+}
