@@ -59,7 +59,7 @@ release: ## Build a Release version of the project
 	@echo ">>> Building Release PyClassifiers...";
 	@if [ -d ./$(f_release) ]; then rm -rf ./$(f_release); fi
 	@mkdir $(f_release); 
-	@cmake -S . -B $(f_release) -D CMAKE_BUILD_TYPE=Release
+	@cmake -S . -B $(f_release) -D CMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
 	@echo ">>> Done";	
 
 opt = ""

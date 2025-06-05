@@ -45,6 +45,8 @@ endif()
 find_package(Python3 3.11 COMPONENTS Interpreter Development REQUIRED)
 message("Python3_LIBRARIES=${Python3_LIBRARIES}")
 
+find_package(nlohmann_json CONFIG REQUIRED)
+
 # CMakes modules
 # --------------
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
@@ -64,9 +66,11 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
-find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${PyClassifiers_SOURCE_DIR}/../lib/include)
-message(STATUS "BayesNet=${BayesNet}")
+# find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
+# find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${PyClassifiers_SOURCE_DIR}/../lib/include)
+find_library(bayesnet NAMES libbayesnet bayesnet libbayesnet.a PATHS ${Platform_SOURCE_DIR}/../lib/lib REQUIRED)
+find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${Platform_SOURCE_DIR}/../lib/include)
+message(STATUS "BayesNet=${bayesnet}")
 message(STATUS "Bayesnet_INCLUDE_DIRS=${Bayesnet_INCLUDE_DIRS}")
 
 
