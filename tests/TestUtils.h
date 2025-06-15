@@ -5,8 +5,8 @@
 #include <vector>
 #include <map>
 #include <tuple>
-#include "ArffFiles.h"
-#include "CPPFImdlp.h"
+#include "ArffFiles/ArffFiles.hpp"
+#include "fimdlp/CPPFImdlp.h"
 
 bool file_exists(const std::string& name);
 std::pair<vector<mdlp::labels_t>, map<std::string, int>> discretize(std::vector<mdlp::samples_t>& X, mdlp::labels_t& y, std::vector<string> features);

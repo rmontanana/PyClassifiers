@@ -52,7 +52,7 @@ debug: ## Build a debug version of the project
 	@echo ">>> Building Debug PyClassifiers...";
 	@if [ -d ./$(f_debug) ]; then rm -rf ./$(f_debug); fi
 	@mkdir $(f_debug); 
-	@cmake -S . -B $(f_debug) -D CMAKE_BUILD_TYPE=Debug -D ENABLE_TESTING=ON -D CODE_COVERAGE=ON
+	@cmake -S . -B $(f_debug) -D CMAKE_BUILD_TYPE=Debug -D ENABLE_TESTING=ON -D CODE_COVERAGE=ON -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
 	@echo ">>> Done";
 
 release: ## Build a Release version of the project
