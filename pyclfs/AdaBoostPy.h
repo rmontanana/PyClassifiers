@@ -1,12 +1,12 @@
-#ifndef ADABOOST_H
-#define ADABOOST_H
+#ifndef ADABOOSTPY_H
+#define ADABOOSTPY_H
 #include "PyClassifier.h"
 
 namespace pywrap {
-    class AdaBoost : public PyClassifier {
+    class AdaBoostPy : public PyClassifier {
     public:
-        AdaBoost();
-        ~AdaBoost() = default;
+        AdaBoostPy();
+        ~AdaBoostPy() = default;
         int getNumberOfEdges() const override;
         int getNumberOfStates() const override;
         int getNumberOfNodes() const override;

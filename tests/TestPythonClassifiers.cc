@@ -10,7 +10,7 @@
 #include "pyclfs/SVC.h"
 #include "pyclfs/RandomForest.h"
 #include "pyclfs/XGBoost.h"
-#include "pyclfs/AdaBoost.h"
+#include "pyclfs/AdaBoostPy.h"
 #include "pyclfs/ODTE.h"
 #include "TestUtils.h"
 #include <iostream>
@@ -63,7 +63,7 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 TEST_CASE("AdaBoostClassifier", "[PyClassifiers]")
 {
     auto raw = RawDatasets("iris", false);
-    auto clf = pywrap::AdaBoost();
+    auto clf = pywrap::AdaBoostPy();
     clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
     clf.setHyperparameters(nlohmann::json::parse("{ \"n_estimators\": 100 }"));
     auto score = clf.score(raw.Xt, raw.yt);
