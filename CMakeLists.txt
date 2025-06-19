@@ -66,10 +66,9 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-# find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
-# find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${PyClassifiers_SOURCE_DIR}/../lib/include)
-find_library(bayesnet NAMES libbayesnet bayesnet libbayesnet.a ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
+find_library(bayesnet NAMES libbayesnet bayesnet libbayesnet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
 find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ../lib/include)
+
 message(STATUS "BayesNet=${bayesnet}")
 message(STATUS "Bayesnet_INCLUDE_DIRS=${Bayesnet_INCLUDE_DIRS}")
 
