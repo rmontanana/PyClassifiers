@@ -45,6 +45,8 @@ endif()
 find_package(Python3 3.11 COMPONENTS Interpreter Development REQUIRED)
 message("Python3_LIBRARIES=${Python3_LIBRARIES}")
 
+find_package(nlohmann_json CONFIG REQUIRED)
+
 # CMakes modules
 # --------------
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
@@ -64,9 +66,10 @@ endif (ENABLE_CLANG_TIDY)
 
 # External libraries - dependencies of PyClassifiers
 # --------------------------------------------------
-find_library(BayesNet NAMES libBayesNet BayesNet libBayesNet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
-find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ${PyClassifiers_SOURCE_DIR}/../lib/include)
-message(STATUS "BayesNet=${BayesNet}")
+find_library(bayesnet NAMES libbayesnet bayesnet libbayesnet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
+find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ../lib/include)
+
+message(STATUS "BayesNet=${bayesnet}")
 message(STATUS "Bayesnet_INCLUDE_DIRS=${Bayesnet_INCLUDE_DIRS}")
 
 
@@ -78,9 +81,8 @@ add_subdirectory(pyclfs)
 # -------
 if (ENABLE_TESTING)
   MESSAGE("Testing enabled")
-  add_git_submodule(lib/catch2)
-  add_git_submodule(lib/mdlp)
-  add_subdirectory(lib/Files)
+  find_package(Catch2 CONFIG REQUIRED)
+  find_package(arff-files CONFIG REQUIRED)
   include(CTest)
   add_subdirectory(tests)
 endif (ENABLE_TESTING)

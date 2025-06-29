@@ -10,14 +10,16 @@
 #include "pyclfs/SVC.h"
 #include "pyclfs/RandomForest.h"
 #include "pyclfs/XGBoost.h"
+#include "pyclfs/AdaBoostPy.h"
 #include "pyclfs/ODTE.h"
 #include "TestUtils.h"
+#include <iostream>
 
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
     map <pair<std::string, std::string>, float> scores = {
         // Diabetes
-        {{"diabetes", "STree"}, 0.81641}, {{"diabetes", "ODTE"}, 0.854166687}, {{"diabetes", "SVC"}, 0.76823}, {{"diabetes", "RandomForest"}, 1.0},
+        {{"diabetes", "STree"}, 0.81641}, {{"diabetes", "ODTE"}, 0.856770813f}, {{"diabetes", "SVC"}, 0.76823}, {{"diabetes", "RandomForest"}, 1.0},
         // Ecoli
         {{"ecoli", "STree"}, 0.8125}, {{"ecoli", "ODTE"}, 0.875}, {{"ecoli", "SVC"}, 0.89583}, {{"ecoli", "RandomForest"}, 1.0},
         // Glass
@@ -35,8 +37,8 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
     map<std::string, std::string> versions = {
         {"ODTE", "1.0.0-1"},
         {"STree", "1.4.0"},
-        {"SVC", "1.5.1"},
-        {"RandomForest", "1.5.1"}
+        {"SVC", "1.5.2"},
+        {"RandomForest", "1.5.2"}
     };
     auto clf = models[name];
 
@@ -57,6 +59,15 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         INFO("Checking version of " + name + " classifier");
         REQUIRE(clf->getVersion() == versions[name]);
     }
+}
+TEST_CASE("AdaBoostClassifier", "[PyClassifiers]")
+{
+    auto raw = RawDatasets("iris", false);
+    auto clf = pywrap::AdaBoostPy();
+    clf.fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
+    clf.setHyperparameters(nlohmann::json::parse("{ \"n_estimators\": 100 }"));
+    auto score = clf.score(raw.Xt, raw.yt);
+    REQUIRE(score == Catch::Approx(0.9599999f).epsilon(raw.epsilon));
 }
 TEST_CASE("Classifiers features", "[PyClassifiers]")
 {
