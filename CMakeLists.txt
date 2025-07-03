@@ -18,9 +18,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS          ON)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    MESSAGE("Debug mode")
+  MESSAGE("Debug mode")
 else(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    MESSAGE("Release mode")
+  MESSAGE("Release mode")
 endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # Options

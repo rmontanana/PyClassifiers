@@ -22,9 +22,9 @@ public:
         tie(Xt, yt, featurest, classNamet, statest) = loadDataset(file_name, true, discretize);
         // Xv is always discretized
         tie(Xv, yv, featuresv, classNamev, statesv) = loadFile(file_name);
-        auto yresized = torch::transpose(yt.view({ yt.size(0), 1 }), 0, 1);
-        dataset = torch::cat({ Xt, yresized }, 0);
-        nSamples = dataset.size(1);
+        auto yresized = yt.view({ yt.size(0), 1 });
+        dataset = torch::cat({ Xt, yresized }, 1);
+        nSamples = dataset.size(0);
         weights = torch::full({ nSamples }, 1.0 / nSamples, torch::kDouble);
         weightsv = std::vector<double>(nSamples, 1.0 / nSamples);
         classNumStates = discretize ? statest.at(classNamet).size() : 0;

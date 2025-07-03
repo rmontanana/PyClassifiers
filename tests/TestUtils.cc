@@ -61,19 +61,23 @@ tuple<torch::Tensor, torch::Tensor, std::vector<std::string>, std::string, map<s
     auto states = map<std::string, std::vector<int>>();
     if (discretize_dataset) {
         auto Xr = discretizeDataset(X, y);
-        Xd = torch::zeros({ static_cast<int>(Xr.size()), static_cast<int>(Xr[0].size()) }, torch::kInt32);
+        // Create tensor as [samples, features] not [features, samples]
+        Xd = torch::zeros({ static_cast<int>(Xr[0].size()), static_cast<int>(Xr.size()) }, torch::kInt32);
         for (int i = 0; i < features.size(); ++i) {
             states[features[i]] = std::vector<int>(*max_element(Xr[i].begin(), Xr[i].end()) + 1);
             auto item = states.at(features[i]);
             iota(begin(item), end(item), 0);
-            Xd.index_put_({ i, "..." }, torch::tensor(Xr[i], torch::kInt32));
+            // Put data as column i (feature i)
+            Xd.index_put_({ "...", i }, torch::tensor(Xr[i], torch::kInt32));
         }
         states[className] = std::vector<int>(*max_element(y.begin(), y.end()) + 1);
         iota(begin(states.at(className)), end(states.at(className)), 0);
     } else {
-        Xd = torch::zeros({ static_cast<int>(X.size()), static_cast<int>(X[0].size()) }, torch::kFloat32);
+        // Create tensor as [samples, features] not [features, samples]
+        Xd = torch::zeros({ static_cast<int>(X[0].size()), static_cast<int>(X.size()) }, torch::kFloat32);
         for (int i = 0; i < features.size(); ++i) {
-            Xd.index_put_({ i, "..." }, torch::tensor(X[i]));
+            // Put data as column i (feature i)
+            Xd.index_put_({ "...", i }, torch::tensor(X[i]));
         }
     }
     return { Xd, torch::tensor(y, torch::kInt32), features, className, states };

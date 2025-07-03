@@ -237,12 +237,12 @@ namespace pywrap {
         CPyObject method = PyUnicode_FromString(name.c_str());
         try {
             if (!(result = PyObject_CallMethodObjArgs(instance, method.getObject(), X.getObject(), NULL)))
-                errorAbort("Couldn't call method predict");
+                errorAbort("Couldn't call method " + name);
         }
         catch (const std::exception& e) {
             errorAbort(e.what());
         }
-        Py_INCREF(result);
+        // PyObject_CallMethodObjArgs already returns a new reference, no need for Py_INCREF
         return result; // Caller must free this object
     }
     double PyWrap::score(const clfId_t id, CPyObject& X, CPyObject& y)
