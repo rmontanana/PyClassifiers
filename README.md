@@ -52,6 +52,16 @@ Don't forget to add the export BOOST_ROOT statement to .bashrc or wherever it is
 
 ## Installation
 
+### Prerequisites
+
+Install Conan package manager:
+
+```bash
+pip install conan
+```
+
+### Build and Install
+
 ```bash
 make release
 make buildr

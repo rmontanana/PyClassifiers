@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
+
 project(PyClassifiers
   VERSION 1.0.3
   DESCRIPTION "Python Classifiers Wrapper."
@@ -6,15 +7,7 @@ project(PyClassifiers
   LANGUAGES CXX
 )
 
-if (CODE_COVERAGE AND NOT ENABLE_TESTING)
-  MESSAGE(FATAL_ERROR "Code coverage requires testing enabled")
-endif (CODE_COVERAGE AND NOT ENABLE_TESTING)
-
-find_package(Torch REQUIRED)
-
-if (POLICY CMP0135)
-  cmake_policy(SET CMP0135 NEW)
-endif ()
+cmake_policy(SET CMP0135 NEW)
 
 # Global CMake variables
 # ----------------------
@@ -22,14 +15,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED            ON)
 set(CMAKE_CXX_EXTENSIONS                  OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS          ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    MESSAGE("Debug mode")
+else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    MESSAGE("Release mode")
+endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # Options
 # -------
 option(ENABLE_TESTING "Unit testing build"                        OFF)
-option(CODE_COVERAGE "Collect coverage from test library"         OFF)
-option(INSTALL_GTEST "Enable installation of googletest."         OFF)
+
+# External libraries
+# ------------------
+find_package(Torch REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(bayesnet CONFIG REQUIRED)
 
 # Boost Library
 set(Boost_USE_STATIC_LIBS OFF) 
@@ -45,36 +47,8 @@ endif()
 find_package(Python3 3.11 COMPONENTS Interpreter Development REQUIRED)
 message("Python3_LIBRARIES=${Python3_LIBRARIES}")
 
-find_package(nlohmann_json CONFIG REQUIRED)
-
-# CMakes modules
-# --------------
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-include(AddGitSubmodule)
-
-if (CODE_COVERAGE)
-  enable_testing()
-  include(CodeCoverage)
-  MESSAGE("Code coverage enabled")
-  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -O0 -g")
-  SET(GCC_COVERAGE_LINK_FLAGS " ${GCC_COVERAGE_LINK_FLAGS} -lgcov --coverage")
-endif (CODE_COVERAGE)
-
-if (ENABLE_CLANG_TIDY)
-  include(StaticAnalyzers) # clang-tidy
-endif (ENABLE_CLANG_TIDY)
-
-# External libraries - dependencies of PyClassifiers
-# --------------------------------------------------
-find_library(bayesnet NAMES libbayesnet bayesnet libbayesnet.a PATHS ${PyClassifiers_SOURCE_DIR}/../lib/lib REQUIRED)
-find_path(Bayesnet_INCLUDE_DIRS REQUIRED NAMES bayesnet PATHS ../lib/include)
-
-message(STATUS "BayesNet=${bayesnet}")
-message(STATUS "Bayesnet_INCLUDE_DIRS=${Bayesnet_INCLUDE_DIRS}")
-
-
-# Subdirectories
-# --------------
+# Add the library
+# ---------------
 add_subdirectory(pyclfs)
 
 # Testing
@@ -83,6 +57,14 @@ if (ENABLE_TESTING)
   MESSAGE("Testing enabled")
   find_package(Catch2 CONFIG REQUIRED)
   find_package(arff-files CONFIG REQUIRED)
+  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -O0 -g")
+  if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-default-inline")
+  endif()
+  ## Configure test data path
+  cmake_path(SET TEST_DATA_PATH "${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
+  configure_file(tests/config/SourceData.h.in "${CMAKE_BINARY_DIR}/configured_files/include/SourceData.h")
+  enable_testing()
   include(CTest)
   add_subdirectory(tests)
 endif (ENABLE_TESTING)
@@ -92,6 +74,6 @@ endif (ENABLE_TESTING)
 install(TARGETS PyClassifiers
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
-        CONFIGURATIONS Release)
-install(DIRECTORY pyclfs/ DESTINATION include/pyclassifiers FILES_MATCHING CONFIGURATIONS Release PATTERN "*.h" PATTERN "*.hpp")
-install(FILES ${Bayesnet_INCLUDE_DIRS}/bayesnet/config.h DESTINATION include/pyclassifiers CONFIGURATIONS Release)
+)
+install(DIRECTORY pyclfs/ DESTINATION include/pyclassifiers FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+

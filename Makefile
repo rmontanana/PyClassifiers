@@ -3,6 +3,14 @@ f_debug = build_debug
 app_targets = PyClassifiers
 test_targets = unit_tests_pyclassifiers 
 
+# Set the number of parallel jobs to the number of available processors minus 7
+CPUS := $(shell getconf _NPROCESSORS_ONLN 2>/dev/null \
+                 || nproc --all 2>/dev/null \
+                 || sysctl -n hw.ncpu)
+
+# --- Your desired job count: CPUs – 7, but never less than 1 --------------
+JOBS := $(shell n=$(CPUS); [ $${n} -gt 7 ] && echo $$((n-7)) || echo 1)
+
 define ClearTests
 	@for t in $(test_targets); do \
 		if [ -f $(f_debug)/tests/$$t ]; then \
@@ -16,6 +24,25 @@ define ClearTests
 	fi ; 
 endef
 
+define build_target
+	@echo ">>> Building the project for $(1)..."
+	@if [ -d $(2) ]; then rm -fr $(2); fi
+	@conan install . --build=missing -of $(2) -s build_type=$(1)
+	@cmake -S . -B $(2) -DCMAKE_TOOLCHAIN_FILE=$(2)/build/$(1)/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=$(1) -D$(3)
+	@echo ">>> Will build using $(JOBS) parallel jobs"
+	echo ">>> Done"
+endef
+
+define compile_target
+	@echo ">>> Compiling for $(1)..."
+		if [ "$(3)" != "" ]; then \
+		target="-t$(3)"; \
+	else \
+		target=""; \
+	fi
+	@cmake --build $(2) --config $(1) --parallel $(JOBS) $(target)
+	@echo ">>> Done"
+endef
 
 setup: ## Install dependencies for tests and coverage
 	@if [ "$(shell uname)" = "Darwin" ]; then \
@@ -32,10 +59,10 @@ dependency: ## Create a dependency graph diagram of the project (build/dependenc
 	cd $(f_debug) && cmake .. --graphviz=dependency.dot && dot -Tpng dependency.dot -o dependency.png
 
 buildd: ## Build the debug targets
-	cmake --build $(f_debug) -t $(app_targets) --parallel
+	@$(call compile_target,"Debug","$(f_debug)")
 
 buildr: ## Build the release targets
-	cmake --build $(f_release) -t $(app_targets) --parallel
+	@$(call compile_target,"Release","$(f_release)")
 
 clean: ## Clean the tests info
 	@echo ">>> Cleaning Debug PyClassifiers tests...";
@@ -48,19 +75,11 @@ install: ## Install library
 	@cmake --install $(f_release) --prefix $(prefix)
 	@echo ">>> Done";
 
-debug: ## Build a debug version of the project
-	@echo ">>> Building Debug PyClassifiers...";
-	@if [ -d ./$(f_debug) ]; then rm -rf ./$(f_debug); fi
-	@mkdir $(f_debug); 
-	@cmake -S . -B $(f_debug) -D CMAKE_BUILD_TYPE=Debug -D ENABLE_TESTING=ON -D CODE_COVERAGE=ON -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-	@echo ">>> Done";
+debug: ## Build a debug version of the project with Conan
+	@$(call build_target,"Debug","$(f_debug)", "ENABLE_TESTING=ON")
 
-release: ## Build a Release version of the project
-	@echo ">>> Building Release PyClassifiers...";
-	@if [ -d ./$(f_release) ]; then rm -rf ./$(f_release); fi
-	@mkdir $(f_release); 
-	@cmake -S . -B $(f_release) -D CMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-	@echo ">>> Done";	
+release: ## Build a Release version of the project with Conan
+	@$(call build_target,"Release","$(f_release)", "ENABLE_TESTING=OFF")
 
 opt = ""
 test: ## Run tests (opt="-s") to verbose output the tests, (opt="-c='Test Maximum Spanning Tree'") to run only that section
@@ -81,6 +100,24 @@ coverage: ## Run tests and generate coverage report (build/index.html)
 	@gcovr $(f_debug)/tests
 	@echo ">>> Done";	
 
+# Conan package manager targets
+# =============================
+
+conan-create: ## Create Conan package
+	@echo ">>> Creating Conan package..."
+	@echo ">>> Creating Release build..."
+	@conan create . --build=missing -tf "" -s:a build_type=Release
+	@echo ">>> Creating Debug build..."
+	@conan create . --build=missing -tf "" -s:a build_type=Debug -o "&:enable_testing=False"
+	@echo ">>> Done"
+
+conan-clean: ## Clean Conan cache and build folders
+	@echo ">>> Cleaning Conan cache and build folders..."
+	@conan remove "*" --confirm
+	@conan cache clean
+	@if test -d "$(f_release)" ; then rm -rf "$(f_release)"; fi
+	@if test -d "$(f_debug)" ; then rm -rf "$(f_debug)"; fi
+	@echo ">>> Done"
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

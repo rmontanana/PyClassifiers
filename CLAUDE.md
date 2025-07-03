@@ -35,7 +35,7 @@ make help            # Show all available targets
 ```
 
 ### Dependencies
-- Requires `VCPKG_ROOT` environment variable set
+- Requires Conan package manager (`pip install conan`)
 - Miniconda installation required for Python classifiers
 - Boost library (preferably system package: `sudo dnf install boost-devel`)
 
@@ -89,7 +89,7 @@ make help            # Show all available targets
 - `pyclfs/PyClassifier.h` - Base classifier interface
 - `CMakeLists.txt` - Main build configuration
 - `Makefile` - Build automation and common tasks
-- `vcpkg.json` - Package dependencies
+- `conanfile.py` - Package dependencies
 - `tests/TestPythonClassifiers.cc` - Main test suite
 
 ## Technical Requirements

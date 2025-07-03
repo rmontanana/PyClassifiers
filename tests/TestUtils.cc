@@ -1,11 +1,11 @@
 #include "TestUtils.h"
-#include "bayesnet/config.h"
+#include "SourceData.h"
 
 class Paths {
 public:
     static std::string datasets()
     {
-        return { data_path.begin(), data_path.end() };
+        return pywrap::SourceData("Test").getPath();
     }
 };
 
