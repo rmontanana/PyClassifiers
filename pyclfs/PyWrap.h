@@ -4,7 +4,10 @@
 #include <map>
 #include <tuple>
 #include <mutex>
+#include <regex>
+#include <set>
 #include <nlohmann/json.hpp>
+#include <stdexcept>
 #include "boost/python/detail/wrap_python.hpp"
 #include "PyHelper.hpp"
 #include "TypeId.h"
@@ -16,6 +19,36 @@ namespace pywrap {
     Singleton class to handle Python/numpy interpreter.
     */
     using json = nlohmann::json;
+    
+    // Custom exception classes for PyWrap errors
+    class PyWrapException : public std::runtime_error {
+    public:
+        explicit PyWrapException(const std::string& message) : std::runtime_error(message) {}
+    };
+    
+    class PyImportException : public PyWrapException {
+    public:
+        explicit PyImportException(const std::string& module) 
+            : PyWrapException("Failed to import Python module: " + module) {}
+    };
+    
+    class PyClassException : public PyWrapException {
+    public:
+        explicit PyClassException(const std::string& className) 
+            : PyWrapException("Failed to find Python class: " + className) {}
+    };
+    
+    class PyInstanceException : public PyWrapException {
+    public:
+        explicit PyInstanceException(const std::string& className) 
+            : PyWrapException("Failed to create instance of Python class: " + className) {}
+    };
+    
+    class PyMethodException : public PyWrapException {
+    public:
+        explicit PyMethodException(const std::string& method) 
+            : PyWrapException("Failed to call Python method: " + method) {}
+    };
     class PyWrap {
     public:
         PyWrap() = default;
@@ -37,6 +70,11 @@ namespace pywrap {
         void importClass(const clfId_t id, const std::string& moduleName, const std::string& className);
         PyObject* getClass(const clfId_t id);
     private:
+        // Input validation and security
+        void validateModuleName(const std::string& moduleName);
+        void validateClassName(const std::string& className);
+        void validateHyperparameters(const json& hyperparameters);
+        std::string sanitizeErrorMessage(const std::string& message);
         // Only call RemoveInstance from clean method
         static void RemoveInstance();
         PyObject* predict_method(const std::string name, const clfId_t id, CPyObject& X);
