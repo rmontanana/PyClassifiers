@@ -72,7 +72,7 @@ class PlatformConan(ConanFile):
         cmake.install()
     
     def package_info(self):
-        self.cpp_info.libs = ["pyclassifiers"]
+        self.cpp_info.libs = ["PyClassifiers"]
         self.cpp_info.includedirs = ["include"]
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.set_property("cmake_target_name", "pyclassifiers::pyclassifiers")
