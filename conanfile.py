@@ -6,7 +6,7 @@ from conan.tools.files import copy
 
 class PlatformConan(ConanFile):
     name = "pyclassifiers"
-    version = "1.0.3"
+    version = "X.X.X"
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
