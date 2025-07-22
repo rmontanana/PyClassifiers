@@ -12,9 +12,13 @@ class PlatformConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "enable_testing": [True, False],
+        "shared": [True, False],
+        "fPIC": [True, False],
     }
     default_options = {
         "enable_testing": False,
+        "shared": False,
+        "fPIC": True,
     }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
@@ -46,6 +50,14 @@ class PlatformConan(ConanFile):
         self.tool_requires("cmake/[>=3.30]")
         self.test_requires("catch2/3.8.1")
         self.test_requires("arff-files/1.2.1")
+
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+
+    def configure(self):
+        if self.options.shared:
+            self.options.rm_safe("fPIC")
 
     def layout(self):
         cmake_layout(self)
