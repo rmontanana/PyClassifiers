@@ -1,3 +1,6 @@
+.DEFAULT_GOAL := help
+.PHONY: setup dependency buildd buildr clean install debug release test coverage conan-create conan-clean help
+
 f_release = build_release
 f_debug = build_debug
 app_targets = PyClassifiers
