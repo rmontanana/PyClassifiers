@@ -13,7 +13,7 @@ namespace pywrap {
     {
         return callMethodInt("get_leaves");
     }
-    int ODTE::getNumberOfStates() const
+    long ODTE::getNumberOfStates() const
     {
         return callMethodInt("get_depth");
     }

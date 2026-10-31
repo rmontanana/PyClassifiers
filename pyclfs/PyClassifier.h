@@ -37,7 +37,7 @@ namespace pywrap {
         std::string getVersion() override { return this->version(); };
         int getNumberOfNodes() const override { return 0; };
         int getNumberOfEdges() const override { return 0; };
-        int getNumberOfStates() const override { return 0; };
+        long getNumberOfStates() const override { return 0; };
         std::vector<std::string> show() const override { return std::vector<std::string>(); }
         std::vector<std::string> graph(const std::string& title = "") const override { return std::vector<std::string>(); }
         bayesnet::status_t getStatus() const override { return bayesnet::NORMAL; };

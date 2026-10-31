@@ -12,6 +12,6 @@ if(ENABLE_TESTING)
       torch::torch ${Python3_LIBRARIES} ${LIBTORCH_PYTHON} 
       Boost::boost Boost::python Boost::numpy fimdlp::fimdlp
       Catch2::Catch2WithMain nlohmann_json::nlohmann_json 
-      bayesnet::bayesnet
+      bayesnet::bayesnet arff-files::arff-files
     )
 endif(ENABLE_TESTING)

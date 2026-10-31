@@ -9,7 +9,7 @@ namespace pywrap {
     {
         return callMethodSumOfItems("get_n_leaves");
     }
-    int RandomForest::getNumberOfStates() const
+    long RandomForest::getNumberOfStates() const
     {
         return callMethodSumOfItems("get_depth");
     }

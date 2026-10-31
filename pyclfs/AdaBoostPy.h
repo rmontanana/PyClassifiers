@@ -8,7 +8,7 @@ namespace pywrap {
         AdaBoostPy();
         ~AdaBoostPy() = default;
         int getNumberOfEdges() const override;
-        int getNumberOfStates() const override;
+        long getNumberOfStates() const override;
         int getNumberOfNodes() const override;
     };
 } /* namespace pywrap */

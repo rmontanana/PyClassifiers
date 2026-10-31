@@ -17,7 +17,7 @@
 
 TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
 {
-    map <pair<std::string, std::string>, float> scores = {
+    std::map<std::pair<std::string, std::string>, float> scores = {
         // Diabetes
         {{"diabetes", "STree"}, 0.81641}, {{"diabetes", "ODTE"}, 0.856770813f}, {{"diabetes", "SVC"}, 0.76823}, {{"diabetes", "RandomForest"}, 1.0},
         // Ecoli
@@ -28,13 +28,13 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
         {{"iris", "STree"}, 0.99333}, {{"iris", "ODTE"}, 0.98667}, {{"iris", "SVC"}, 0.97333}, {{"iris", "RandomForest"}, 1.0},
     };
     std::string name = GENERATE("ODTE", "STree", "SVC", "RandomForest");
-    map<std::string, pywrap::PyClassifier*> models = {
+    std::map<std::string, pywrap::PyClassifier*> models = {
         {"ODTE", new pywrap::ODTE()},
         {"STree", new pywrap::STree()},
         {"SVC", new pywrap::SVC()},
         {"RandomForest", new pywrap::RandomForest()}
     };
-    map<std::string, std::string> versions = {
+    std::map<std::string, std::string> versions = {
         {"ODTE", "1.0.0-1"},
         {"STree", "1.4.0"},
         {"SVC", "1.5.2"},
@@ -50,7 +50,7 @@ TEST_CASE("Test Python Classifiers score", "[PyClassifiers]")
             clf->setHyperparameters(random_state);
             clf->fit(raw.Xt, raw.yt, raw.featurest, raw.classNamet, raw.statest);
             auto score = clf->score(raw.Xt, raw.yt);
-            INFO("File: " + file_name + " Classifier: " + name + " Score: " + to_string(score));
+            INFO("File: " + file_name + " Classifier: " + name + " Score: " + std::to_string(score));
             REQUIRE(score == Catch::Approx(scores[{file_name, name}]).epsilon(raw.epsilon));
         }
     }

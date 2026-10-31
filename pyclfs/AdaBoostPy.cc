@@ -9,7 +9,7 @@ namespace pywrap {
     {
         return callMethodSumOfItems("get_n_leaves");
     }
-    int AdaBoostPy::getNumberOfStates() const
+    long AdaBoostPy::getNumberOfStates() const
     {
         return callMethodSumOfItems("get_depth");
     }

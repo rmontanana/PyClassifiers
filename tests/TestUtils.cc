@@ -9,10 +9,10 @@ public:
     }
 };
 
-pair<std::vector<mdlp::labels_t>, map<std::string, int>> discretize(std::vector<mdlp::samples_t>& X, mdlp::labels_t& y, std::vector<std::string> features)
+std::pair<std::vector<mdlp::labels_t>, std::map<std::string, int>> discretize(std::vector<mdlp::samples_t>& X, mdlp::labels_t& y, std::vector<std::string> features)
 {
     std::vector<mdlp::labels_t> Xd;
-    map<std::string, int> maxes;
+    std::map<std::string, int> maxes;
     auto fimdlp = mdlp::CPPFImdlp();
     for (int i = 0; i < X.size(); i++) {
         fimdlp.fit(X[i], y);
@@ -45,9 +45,9 @@ bool file_exists(const std::string& name)
     }
 }
 
-tuple<torch::Tensor, torch::Tensor, std::vector<std::string>, std::string, map<std::string, std::vector<int>>> loadDataset(const std::string& name, bool class_last, bool discretize_dataset)
+std::tuple<torch::Tensor, torch::Tensor, std::vector<std::string>, std::string, std::map<std::string, std::vector<int>>> loadDataset(const std::string& name, bool class_last, bool discretize_dataset)
 {
-    auto handler = ArffFiles();
+    auto handler = ArffFiles::ArffFiles();
     handler.load(Paths::datasets() + static_cast<std::string>(name) + ".arff", class_last);
     // Get Dataset X, y
     std::vector<mdlp::samples_t>& X = handler.getX();
@@ -56,9 +56,9 @@ tuple<torch::Tensor, torch::Tensor, std::vector<std::string>, std::string, map<s
     auto className = handler.getClassName();
     std::vector<std::string> features;
     auto attributes = handler.getAttributes();
-    transform(attributes.begin(), attributes.end(), back_inserter(features), [](const auto& pair) { return pair.first; });
+    transform(attributes.begin(), attributes.end(), back_inserter(features), [](const auto& attr) { return attr.first; });
     torch::Tensor Xd;
-    auto states = map<std::string, std::vector<int>>();
+    auto states = std::map<std::string, std::vector<int>>();
     if (discretize_dataset) {
         auto Xr = discretizeDataset(X, y);
         // Create tensor as [features, samples] (bayesnet format)
@@ -86,9 +86,9 @@ tuple<torch::Tensor, torch::Tensor, std::vector<std::string>, std::string, map<s
     return { Xd, torch::tensor(y, torch::kInt32), features, className, states };
 }
 
-tuple<std::vector<std::vector<int>>, std::vector<int>, std::vector<std::string>, std::string, map<std::string, std::vector<int>>> loadFile(const std::string& name)
+std::tuple<std::vector<std::vector<int>>, std::vector<int>, std::vector<std::string>, std::string, std::map<std::string, std::vector<int>>> loadFile(const std::string& name)
 {
-    auto handler = ArffFiles();
+    auto handler = ArffFiles::ArffFiles();
     handler.load(Paths::datasets() + static_cast<std::string>(name) + ".arff");
     // Get Dataset X, y
     std::vector<mdlp::samples_t>& X = handler.getX();
@@ -97,13 +97,13 @@ tuple<std::vector<std::vector<int>>, std::vector<int>, std::vector<std::string>,
     auto className = handler.getClassName();
     std::vector<std::string> features;
     auto attributes = handler.getAttributes();
-    transform(attributes.begin(), attributes.end(), back_inserter(features), [](const auto& pair) { return pair.first; });
+    transform(attributes.begin(), attributes.end(), back_inserter(features), [](const auto& attr) { return attr.first; });
     // Discretize Dataset
     std::vector<mdlp::labels_t> Xd;
-    map<std::string, int> maxes;
-    tie(Xd, maxes) = discretize(X, y, features);
+    std::map<std::string, int> maxes;
+    std::tie(Xd, maxes) = discretize(X, y, features);
     maxes[className] = *max_element(y.begin(), y.end()) + 1;
-    map<std::string, std::vector<int>> states;
+    std::map<std::string, std::vector<int>> states;
     for (auto feature : features) {
         states[feature] = std::vector<int>(maxes[feature]);
     }

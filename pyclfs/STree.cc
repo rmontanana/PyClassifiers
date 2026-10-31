@@ -13,7 +13,7 @@ namespace pywrap {
     {
         return callMethodInt("get_leaves");
     }
-    int STree::getNumberOfStates() const
+    long STree::getNumberOfStates() const
     {
         return callMethodInt("get_depth");
     }
