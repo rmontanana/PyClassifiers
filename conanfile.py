@@ -44,7 +44,7 @@ class PlatformConan(ConanFile):
         self.requires("nlohmann_json/3.11.3")
         self.requires("folding/2.0.0")
         self.requires("fimdlp/3.0.1")
-        self.requires("bayesnet/1.4.1")
+        self.requires("bayesnet/1.4.2")
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.30]")
